@@ -122,7 +122,7 @@ fun FooterPerfil() {
         Text("Redes Sociales: Facebook - Mil Sabores Cake Shop")
     }
 }
-
+// la validacion al ingresar in info esta funcionando bien sigo con la siguiente de carrittos 
 
 
 
