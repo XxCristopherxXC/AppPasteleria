@@ -21,4 +21,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
+}/ el main se corrigio se intalaron la librerias por comandos gracias youtube xd boore esto despues jajaj 
