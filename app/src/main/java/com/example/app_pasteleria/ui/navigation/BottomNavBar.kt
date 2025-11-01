@@ -47,3 +47,7 @@ data class BottomNavItem(
     val label: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector
 )
+
+
+
+// tomo tiempo pero ya funcionan bien los botones de cada screems ahora actulñisar cada 1 de las pantalladas
