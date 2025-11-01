@@ -195,5 +195,6 @@ fun FooterPromociones() {
         Text("Redes Sociales: Facebook - Mil Sabores Cake Shop")
     }
 }
-
+// quedo easy ejecutar por 30 veces el test para ver los errores
+// ejecucion limpia sin errores esta ves , verificar en nav para que este sincronisada con los import 
 
