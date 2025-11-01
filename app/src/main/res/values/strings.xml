@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Pastelería Dulce Sabor</string>
+
+    <!-- Navegación -->
+    <string name="nav_inicio">Inicio</string>
+    <string name="nav_catalogo">Catálogo</string>
+    <string name="nav_carrito">Carrito</string>
+    <string name="nav_perfil">Perfil</string>
+
+    <!-- Pantalla Inicio -->
+    <string name="inicio_titulo">Pastelería Dulce Sabor</string>
+    <string name="inicio_subtitulo">Endulza tus momentos especiales</string>
+    <string name="inicio_btn_catalogo">Ver Catálogo de Productos</string>
+    <string name="inicio_btn_carrito">Ir al Carrito</string>
+    <string name="inicio_promociones">Promociones Especiales</string>
+
+    <!-- Pantalla Catálogo -->
+    <string name="catalogo_titulo">Nuestro Catálogo</string>
+
+    <!-- Pantalla Carrito -->
+    <string name="carrito_titulo">Mi Carrito</string>
+    <string name="carrito_vacio">Tu carrito está vacío</string>
+    <string name="carrito_vacio_desc">Agrega productos desde el catálogo</string>
+    <string name="carrito_total">Total:</string>
+    <string name="carrito_finalizar">Finalizar Pedido</string>
+    <string name="carrito_vaciar">Vaciar Carrito</string>
+
+    <!-- Pantalla Perfil -->
+    <string name="perfil_titulo">Mi Perfil</string>
+    <string name="perfil_nombre">Nombre</string>
+    <string name="perfil_email">Correo electrónico</string>
+    <string name="perfil_telefono">Teléfono</string>
+    <string name="perfil_editar">Editar Perfil</string>
+    <string name="perfil_cerrar_sesion">Cerrar Sesión</string>
+
+    <!-- Productos -->
+    <string name="producto_desde">Desde %1$s CLP</string>
+    <string name="producto_tamano">Tamaño: %1$s</string>
+    <string name="producto_mensaje">Mensaje: %1$s</string>
+    <string name="producto_subtotal">Subtotal: %1$s CLP</string>
+    <string name="producto_eliminar">Eliminar</string>
+
+    <!-- Promociones -->
+    <string name="promocion_codigo">Código: %1$s</string>
+    <string name="promocion_validez">Válido hasta: %1$s</string>
+</resources>
