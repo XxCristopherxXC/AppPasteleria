@@ -6,3 +6,4 @@ sealed class Routes(val route: String) {
     object Carrito : Routes("carrito")
     object Perfil : Routes("perfil")
 }
+// actualisar todas las rutas 
