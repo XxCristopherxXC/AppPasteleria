@@ -85,3 +85,4 @@ fun CarritoItem(
         }
     }
 }
+// componentes para el carrito error en la linea 15 soluacionar mañana 
