@@ -129,7 +129,7 @@ fun FooterPedidos() {
         Text("Redes Sociales: Facebook - Mil Sabores Cake Shop")
     }
 }
-
+//esta creada la ocuparemos ?? ya se vera por ahora dejarlo asi no eliminar 
 
 
 
