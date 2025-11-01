@@ -78,7 +78,7 @@ fun AppNavGraph(
     }
 }
 
-
+// nav funcionando correctamente con inicio ya entendiendo que funciona igual que html se iso mas rapido el trabajo 
 
 
 
