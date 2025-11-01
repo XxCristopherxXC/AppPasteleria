@@ -161,6 +161,8 @@ fun FooterCatalogo() {
     }
 }
 
+// esto fue largo pero funciono se creo el catalogo con drewale donde estan import la imgenes y con validacion de cada boton ademas 
+// se aplica el filtro correctamente continuare con el mainactivity ya que me arroja mas errores con este cambio 
 
 
 
