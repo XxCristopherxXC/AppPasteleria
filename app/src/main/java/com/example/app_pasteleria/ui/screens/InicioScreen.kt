@@ -204,7 +204,7 @@ fun FooterInicio() {
     }
 }
 
-
+// el inicio es lo mas complicado hay que actualisarlo con todos los botones luego sincronisarlo con el nav pero todo funciono bien vamos por el siguiente paso 
 
 
 
