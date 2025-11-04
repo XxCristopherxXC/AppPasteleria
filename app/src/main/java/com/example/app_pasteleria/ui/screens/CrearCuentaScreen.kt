@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CrearCuentaScreen(
-    onCuentaCreada: (String, String, String, String) -> Unit,
+    onCuentaCreada: (String, String, String, String) -> Unit = { _, _, _, _ -> },
     onCancelarClick: () -> Unit
 ) {
     var nombre by remember { mutableStateOf("") }
@@ -23,83 +23,89 @@ fun CrearCuentaScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Título
-            Text(
-                text = "Crear Cuenta",
-                fontSize = 28.sp,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            TextField(
-                value = nombre,
-                onValueChange = { nombre = it },
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            TextField(
-                value = apellido,
-                onValueChange = { apellido = it },
-                label = { Text("Apellido") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            TextField(
-                value = correo,
-                onValueChange = { correo = it },
-                label = { Text("Correo") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            TextField(
-                value = contrasena,
-                onValueChange = { contrasena = it },
-                label = { Text("Contraseña") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Button(
-                    onClick = {
-                        onCuentaCreada(nombre, apellido, correo, contrasena)
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Cuenta creada con éxito")
-                        }
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Crear Cuenta")
-                }
+                // Título
+                Text(
+                    text = "Crear Cuenta",
+                    fontSize = 28.sp,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
 
-                OutlinedButton(
-                    onClick = onCancelarClick,
-                    modifier = Modifier.weight(1f)
+                // Campos de texto
+                TextField(
+                    value = nombre,
+                    onValueChange = { nombre = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                TextField(
+                    value = apellido,
+                    onValueChange = { apellido = it },
+                    label = { Text("Apellido") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                TextField(
+                    value = correo,
+                    onValueChange = { correo = it },
+                    label = { Text("Correo") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                TextField(
+                    value = contrasena,
+                    onValueChange = { contrasena = it },
+                    label = { Text("Contraseña") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Botones
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Cancelar")
+                    Button(
+                        onClick = {
+                            // Solo validación y mensaje, sin navegación
+                            coroutineScope.launch {
+                                if (nombre.isBlank() || apellido.isBlank() || correo.isBlank() || contrasena.isBlank()) {
+                                    snackbarHostState.showSnackbar("⚠️ Por favor completa todos los campos")
+                                } else {
+                                    snackbarHostState.showSnackbar("✅ Cuenta creada con éxito")
+                                }
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Crear Cuenta")
+                    }
+
+                    OutlinedButton(
+                        onClick = onCancelarClick,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Cancelar")
+                    }
                 }
             }
 
-            // Snackbar
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                SnackbarHost(hostState = snackbarHostState)
-            }
+            // Footer fijo al final
+            FooterCrearCuenta()
         }
-
-        // Footer al final
-        FooterCrearCuenta()
     }
 }
 
