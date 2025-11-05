@@ -47,6 +47,7 @@ android {
 }
 
 dependencies {
+    // Core
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -70,8 +71,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // Gson
+    // Gson (para serializar carrito)
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // Google Location Services (GPS)
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
@@ -83,3 +87,5 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
 }
+
+
