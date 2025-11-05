@@ -10,14 +10,12 @@ import com.milsabores.pasteleria.data.models.ItemCarrito
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-// Extensión de Context para DataStore
 val Context.carritoDataStore by preferencesDataStore(name = "carrito_prefs")
 
 object CarritoPreferences {
 
     private val CARRITO_KEY = stringPreferencesKey("carrito_items")
 
-    // Guardar lista de items en DataStore como JSON
     suspend fun guardarCarrito(context: Context, items: List<ItemCarrito>) {
         val json = Gson().toJson(items)
         context.carritoDataStore.edit { prefs ->
@@ -25,12 +23,11 @@ object CarritoPreferences {
         }
     }
 
-    // Recuperar lista de items desde DataStore
     fun obtenerCarrito(context: Context): Flow<List<ItemCarrito>> {
         return context.carritoDataStore.data.map { prefs ->
             val json = prefs[CARRITO_KEY] ?: "[]"
             val type = object : TypeToken<List<ItemCarrito>>() {}.type
-            Gson().fromJson(json, type)
+            Gson().fromJson<List<ItemCarrito>>(json, type)
         }
     }
 }
