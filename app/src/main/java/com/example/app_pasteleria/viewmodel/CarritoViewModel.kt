@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class CarritoViewModel : ViewModel() {
+
     private val _carritoItems = MutableStateFlow<List<ItemCarrito>>(emptyList())
     val carritoItems: StateFlow<List<ItemCarrito>> = _carritoItems
 
+    // Agrega un producto al carrito o incrementa cantidad si ya existe
     fun agregarProducto(producto: Producto, tamano: Tamano = Tamano.INTERMEDIA) {
         val current = _carritoItems.value.toMutableList()
         val existing = current.find { it.producto.id == producto.id && it.tamano == tamano }
