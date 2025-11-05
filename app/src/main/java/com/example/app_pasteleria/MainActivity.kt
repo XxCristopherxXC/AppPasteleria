@@ -12,7 +12,7 @@ import com.milsabores.pasteleria.ui.theme.AppPasteleriaTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
+        setContent { // 🔹 Aquí se usa dentro de ComponentActivity
             AppPasteleriaTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
@@ -21,4 +21,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}/ el main se corrigio se intalaron la librerias por comandos gracias youtube xd boore esto despues jajaj 
+}
+
+
