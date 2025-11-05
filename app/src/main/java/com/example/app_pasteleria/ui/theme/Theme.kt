@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val LightColorScheme = lightColorScheme(
-    primary = ColorMarron,           // Marrón
-    secondary = ColorRosa,           // Rosa
+    primary = ColorMarron,
+    secondary = ColorRosa,
     tertiary = Teal200,
-    background = ColorFondo,         // Beige claro
+    background = ColorFondo,
     surface = White,
     onPrimary = White,
     onSecondary = Black,
