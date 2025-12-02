@@ -1,160 +1,131 @@
 package com.milsabores.pasteleria.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.milsabores.pasteleria.viewmodel.CarritoViewModel
+import com.example.app_pasteleria.network.CarritoItemResponse
+import kotlinx.coroutines.launch
 
 @Composable
 fun CarritoScreen(
-    carritoViewModel: CarritoViewModel? = null,
-    onFinalizarPedidoClick: () -> Unit = {},
-    onIrAPedidosClick: () -> Unit = {} // Botón existente
+    carritoViewModel: CarritoViewModel = viewModel()
 ) {
-    // Estado para mostrar validación
-    var mostrarMensaje by remember { mutableStateOf(false) }
+    val items: List<CarritoItemResponse> by carritoViewModel.carrito.collectAsState()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Tu Carrito",
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = "Revisa los productos antes de finalizar tu pedido.",
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
+    LaunchedEffect(Unit) {
+        carritoViewModel.cargarCarrito()
+    }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(getCarritoEjemplo()) { item ->
-                    CarritoItemCard(item.nombre, item.cantidad, item.precio)
-                }
-            }
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
-            Spacer(modifier = Modifier.height(16.dp))
+        if (items.isEmpty()) {
+            Text("El carrito está vacío", style = MaterialTheme.typography.headlineMedium)
+        } else {
 
-            Text(
-                text = "Total: $35.00",
-                style = MaterialTheme.typography.titleMedium,
-                fontSize = 20.sp
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Botón Finalizar Pedido con validación
+            // Botón para vaciar todo el carrito
             Button(
                 onClick = {
-                    mostrarMensaje = true
-                    onFinalizarPedidoClick()
+                    scope.launch {
+                        try {
+                            carritoViewModel.vaciar()
+                            Toast.makeText(context, "Carrito vaciado", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Error al vaciar carrito: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                    }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             ) {
-                Text("Finalizar Pedido")
+                Text("Vaciar Carrito")
             }
 
-            // Mensaje de validación (Snackbar)
-            if (mostrarMensaje) {
-                LaunchedEffect(Unit) {
-                    kotlinx.coroutines.delay(2000)
-                    mostrarMensaje = false
+            items.forEach { item ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+
+                        Text("Item ID: ${item.id}", style = MaterialTheme.typography.titleMedium)
+                        Text("Producto ID: ${item.idProducto}")
+                        Text("Tamaño: ${item.tamano}")
+                        Text("Cantidad: ${item.cantidad}")
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = {
+                                Log.d("CarritoScreen", "Botón eliminar presionado. Item ID: ${item.id}")
+                                scope.launch {
+                                    try {
+                                        Log.d("CarritoScreen", "Llamando a eliminar para item: ${item.id}")
+                                        carritoViewModel.eliminar(item.id)
+                                        Log.d("CarritoScreen", "Eliminación completada")
+                                        Toast.makeText(context, "Producto eliminado", Toast.LENGTH_SHORT).show()
+                                    } catch (e: Exception) {
+                                        Log.e("CarritoScreen", "Error al eliminar: ${e.message}", e)
+                                        Toast.makeText(context, "Error al eliminar: ${e.message}", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
+                        ) {
+                            Text("Eliminar del Carrito")
+                        }
+                    }
                 }
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "✅ Pedido finalizado con éxito",
-                    color = Color(0xFF388E3C),
-                    style = MaterialTheme.typography.titleMedium
-                )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón Ir a Mis Pedidos
+            // Botón Finalizar Compra
             Button(
-                onClick = onIrAPedidosClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
+                onClick = {
+                    if (items.isEmpty()) {
+                        Toast.makeText(context, "El carrito está vacío", Toast.LENGTH_SHORT).show()
+                    } else {
+                        scope.launch {
+                            try {
+                                // Calcular total de items antes de vaciar
+                                val totalItems = items.sumOf { it.cantidad }
+
+                                Log.d("CarritoScreen", "Finalizando compra con ${items.size} items")
+
+                                // Vaciar el carrito después de finalizar la compra
+                                carritoViewModel.vaciar()
+
+                                Toast.makeText(
+                                    context,
+                                    "¡Compra finalizada! Total: $totalItems producto(s)",
+                                    Toast.LENGTH_LONG
+                                ).show()
+
+                                Log.d("CarritoScreen", "Compra finalizada y carrito vaciado exitosamente")
+
+                            } catch (e: Exception) {
+                                Log.e("CarritoScreen", "Error al finalizar compra: ${e.message}", e)
+                                Toast.makeText(
+                                    context,
+                                    "Error al finalizar compra: ${e.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Ir a Mis Pedidos")
+                Text("Finalizar Compra")
             }
         }
-
-        FooterCarrito()
     }
 }
-
-data class CarritoItem(val nombre: String, val cantidad: Int, val precio: Double)
-
-fun getCarritoEjemplo(): List<CarritoItem> {
-    return listOf(
-        CarritoItem("Pastel de Chocolate", 1, 15.0),
-        CarritoItem("Cupcakes de Vainilla", 6, 12.0),
-        CarritoItem("Tarta de Fresas", 1, 8.0)
-    )
-}
-
-@Composable
-fun CarritoItemCard(nombre: String, cantidad: Int, precio: Double) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE1F5FE))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(nombre, style = MaterialTheme.typography.titleMedium)
-                Text("Cantidad: $cantidad", style = MaterialTheme.typography.bodyMedium)
-            }
-            Text("$${precio * cantidad}", style = MaterialTheme.typography.titleMedium)
-        }
-    }
-}
-
-@Composable
-fun FooterCarrito() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-        Text("Dirección: Av. Américo Vespucio 1501, Cerrillos, Región Metropolitana")
-        Spacer(modifier = Modifier.height(4.dp))
-        Text("Teléfono: +52 33 1427 2887")
-        Spacer(modifier = Modifier.height(4.dp))
-        Text("Redes Sociales: Facebook - Mil Sabores Cake Shop")
-    }
-}
-
-
-
-

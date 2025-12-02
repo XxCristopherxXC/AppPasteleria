@@ -114,6 +114,3 @@ fun CrearCuentaScreen(
         SnackbarHost(hostState = snackbarHostState)
     }
 }
-
-
-//la creacion de la cuenta esta funcionando con la validacion de la info sincroniso con el nav ya estamos avansando mas fluidos y sin errores 

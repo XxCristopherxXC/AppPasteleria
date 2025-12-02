@@ -1,84 +1,73 @@
 package com.milsabores.pasteleria.ui.navigation
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.milsabores.pasteleria.data.repository.ProductosRepository
-import com.milsabores.pasteleria.ui.screens.*
-import com.milsabores.pasteleria.viewmodel.CarritoViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.milsabores.pasteleria.ui.screens.InicioScreen
+import com.milsabores.pasteleria.ui.screens.CatalogoScreen
+import com.milsabores.pasteleria.ui.screens.CarritoScreen
+import com.milsabores.pasteleria.ui.screens.PromocionesScreen
+import com.milsabores.pasteleria.ui.screens.PerfilScreen
+import com.milsabores.pasteleria.ui.screens.CrearCuentaScreen
 
 @Composable
-fun AppNavGraph(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
-    val carritoViewModel: CarritoViewModel = viewModel()
+fun AppNavGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = "inicio",
-        modifier = modifier
+        startDestination = "inicio"
     ) {
+
+        // PANTALLA DE INICIO
         composable("inicio") {
             InicioScreen(
                 onVerCatalogoClick = { navController.navigate("catalogo") },
                 onHacerPedidoClick = { navController.navigate("carrito") },
-                onCrearCuentaClick = { navController.navigate("crear_cuenta") },
+                onCrearCuentaClick = { navController.navigate("crearCuenta") },
                 onPerfilClick = { navController.navigate("perfil") },
                 onPromocionesClick = { navController.navigate("promociones") }
             )
         }
 
+        // CATALOGO
         composable("catalogo") {
-            CatalogoScreen(
-                productos = ProductosRepository.getProductos(),
-                onProductoClick = { producto, tamano ->
-                    carritoViewModel.agregarProducto(producto, tamano)
-                }
-            )
+            CatalogoScreen()
         }
 
+        // CARRITO REAL
         composable("carrito") {
-            CarritoScreen(
-                carritoViewModel = carritoViewModel,
-                onFinalizarPedidoClick = { carritoViewModel.vaciarCarrito() },
-                onIrAPedidosClick = { navController.navigate("pantalla_pedidos") } // nuevo
-            )
+            CarritoScreen()
         }
 
-        composable("pantalla_pedidos") {
-            PantallaPedidos() // tu pantalla de pedidos
-        }
-
+        // PERFIL
         composable("perfil") {
             PerfilScreen(
-                onCrearCuentaClick = { navController.navigate("crear_cuenta") },
-                onCerrarSesionClick = { /* cerrar sesión */ }
+                usuarioViewModel = viewModel(),
+                onCerrarSesion = { navController.navigate("inicio") },
+                onVolverInicio = { navController.navigate("inicio") }
             )
         }
 
-        composable("crear_cuenta") {
-            CrearCuentaScreen(
-                onCuentaCreada = { nombre, apellido, correo, contrasena ->
-                    println("Cuenta creada: $nombre $apellido $correo $contrasena")
-                    navController.popBackStack()
-                },
-                onCancelarClick = { navController.popBackStack() }
-            )
-        }
-
+        // PROMOCIONES
         composable("promociones") {
             PromocionesScreen(
                 onVolverInicioClick = { navController.navigate("inicio") }
             )
         }
+
+        // CREAR CUENTA
+        composable("crearCuenta") {
+            CrearCuentaScreen(
+                onCuentaCreada = { nombre, apellido, correo, contrasena ->
+                    // Aquí podrías guardar el usuario con el ViewModel
+                    // usuarioViewModel.crearCuenta(nombre, apellido, correo, contrasena)
+                    navController.navigate("inicio")
+                },
+                onCancelarClick = { navController.navigate("inicio") }
+            )
+        }
     }
 }
-
-// nav funcionando correctamente con inicio ya entendiendo que funciona igual que html se iso mas rapido el trabajo 
-
-
-

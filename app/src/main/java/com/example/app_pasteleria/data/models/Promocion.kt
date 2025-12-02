@@ -10,4 +10,4 @@ data class Promocion(
     val codigo: String,
     val validezHasta: String
 )
-//prueba de commit
+
