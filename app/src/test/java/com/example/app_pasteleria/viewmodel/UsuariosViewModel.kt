@@ -1,13 +1,9 @@
 package com.milsabores.pasteleria.viewmodel
 
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class UsuariosViewModelTest {
 
     private lateinit var viewModel: UsuariosViewModel
@@ -18,35 +14,42 @@ class UsuariosViewModelTest {
     }
 
     @Test
-    fun `actualizarNombre actualiza correctamente`() = runTest {
-        viewModel.actualizarNombre("Juan")
+    fun `crearCuenta asigna correctamente el usuario`() {
+        viewModel.crearCuenta(
+            nombre = "Juan",
+            apellido = "Pérez",
+            correo = "juan@test.com",
+            contrasena = "123456"
+        )
 
-        viewModel.nombre.test {
-            val value = awaitItem()
-            assertThat(value).isEqualTo("Juan")
-        }
+        val usuario = viewModel.usuario.value
+
+        assertThat(usuario).isNotNull()
+        assertThat(usuario?.nombre).isEqualTo("Juan")
+        assertThat(usuario?.apellido).isEqualTo("Pérez")
+        assertThat(usuario?.correo).isEqualTo("juan@test.com")
+        assertThat(usuario?.contrasena).isEqualTo("123456")
     }
 
     @Test
-    fun `validarCampos retorna true si datos correctos`() = runTest {
-        viewModel.actualizarNombre("Juan")
-        viewModel.actualizarApellido("Perez")
-        viewModel.actualizarCorreo("correo@ejemplo.com")
-        viewModel.actualizarContrasena("123456")
+    fun `cerrarSesion deja usuario en null`() {
+        viewModel.crearCuenta("Juan", "Pérez", "jp@test.com", "123456")
 
-        val result = viewModel.validarCampos()
-        assertThat(result).isTrue()
+        viewModel.cerrarSesion()
+
+        assertThat(viewModel.usuario.value).isNull()
     }
 
     @Test
-    fun `validarCampos retorna false si datos incorrectos`() = runTest {
-        viewModel.actualizarNombre("")
-        viewModel.actualizarApellido("")
-        viewModel.actualizarCorreo("correoInvalido")
-        viewModel.actualizarContrasena("123")
+    fun `estaLogueado retorna true cuando existe usuario`() {
+        viewModel.crearCuenta("Ana", "López", "ana@test.com", "123456")
 
-        val result = viewModel.validarCampos()
-        assertThat(result).isFalse()
+        assertThat(viewModel.estaLogueado()).isTrue()
+    }
+
+    @Test
+    fun `estaLogueado retorna false cuando no hay usuario`() {
+        assertThat(viewModel.estaLogueado()).isFalse()
     }
 }
 

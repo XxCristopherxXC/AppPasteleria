@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import com.milsabores.pasteleria.data.persistence.PreferenciasLocal
 import kotlinx.coroutines.launch
 
 @Composable
@@ -25,6 +27,7 @@ fun CrearCuentaScreen(
     var contrasena by remember { mutableStateOf("") }
     var errorMensaje by remember { mutableStateOf<String?>(null) }
 
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -63,7 +66,7 @@ fun CrearCuentaScreen(
             leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            isError = !correo.contains("@")
+            isError = correo.isBlank() || !correo.contains("@")
         )
 
         OutlinedTextField(
@@ -81,18 +84,30 @@ fun CrearCuentaScreen(
         Button(
             onClick = {
                 when {
-                    nombre.isBlank() || apellido.isBlank() ||
-                            correo.isBlank() || contrasena.isBlank() -> {
+                    nombre.isBlank() ||
+                            apellido.isBlank() ||
+                            correo.isBlank() ||
+                            contrasena.isBlank() -> {
                         errorMensaje = "Completa todos los campos"
                     }
+
                     !correo.contains("@") -> errorMensaje = "Correo no válido"
+
                     contrasena.length < 6 -> errorMensaje = "La contraseña debe tener al menos 6 caracteres"
+
                     else -> {
                         errorMensaje = null
-                        onCuentaCreada(nombre, apellido, correo, contrasena)
+
+                        // Guardar en DataStore
                         scope.launch {
+                            PreferenciasLocal.guardarNombre(context, nombre)
+                            PreferenciasLocal.guardarApellido(context, apellido)
+                            PreferenciasLocal.guardarCorreo(context, correo)
+
                             snackbarHostState.showSnackbar("Cuenta creada con éxito")
                         }
+
+                        onCuentaCreada(nombre, apellido, correo, contrasena)
                     }
                 }
             },
@@ -108,9 +123,15 @@ fun CrearCuentaScreen(
         }
 
         errorMensaje?.let {
-            Text(it, color = MaterialTheme.colorScheme.error)
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
 
         SnackbarHost(hostState = snackbarHostState)
     }
 }
+
+

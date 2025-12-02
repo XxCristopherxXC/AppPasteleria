@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,6 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.milsabores.pasteleria.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.milsabores.pasteleria.viewmodel.PromocionesViewModel
 
 data class Promocion(
     val titulo: String,
@@ -29,7 +31,9 @@ data class Promocion(
 fun PromocionesScreen(
     onVolverInicioClick: () -> Unit
 ) {
-    // Lista de promociones de ejemplo (pueden venir del microservicio si deseas)
+    // -----------------------
+    // PROMOCIONES LOCALES
+    // -----------------------
     val promociones = listOf(
         Promocion(
             titulo = "Torta de Chocolate Especial",
@@ -49,12 +53,25 @@ fun PromocionesScreen(
         )
     )
 
+    // -----------------------
+    // IMÁGENES LOCALES
+    // -----------------------
     val imagenes = listOf(
         R.drawable.promocion_chocolate,
         R.drawable.promocion_familiar,
         R.drawable.promocion_bodas
     )
 
+    // -----------------------
+    // VIEWMODEL API EXTERNA
+    // -----------------------
+    val apiViewModel: PromocionesViewModel = viewModel()
+    val promosApi by apiViewModel.promosApi.collectAsState()
+    val cargandoApi by apiViewModel.cargando.collectAsState()
+
+    // -----------------------
+    // UI GENERAL
+    // -----------------------
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,6 +83,9 @@ fun PromocionesScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
+            // -----------------------
+            // TITULO + BOTÓN INICIO + CARRUSEL
+            // -----------------------
             item {
                 Text(
                     text = "Promociones Especiales",
@@ -87,7 +107,9 @@ fun PromocionesScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Carrusel de imágenes
+                // -----------------------
+                // CARRUSEL DE IMÁGENES
+                // -----------------------
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(imagenes) { img ->
                         Card(
@@ -108,7 +130,9 @@ fun PromocionesScreen(
                 }
             }
 
-            // Lista de promociones
+            // -----------------------
+            // PROMOCIONES LOCALES (TU DISEÑO ORIGINAL)
+            // -----------------------
             items(promociones) { promo ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -146,7 +170,59 @@ fun PromocionesScreen(
                 }
             }
 
-            // Información adicional
+            // -----------------------
+            // API EXTERNA (NUEVA SECCIÓN)
+            // -----------------------
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Promociones API Externa",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (cargandoApi) {
+                    CircularProgressIndicator()
+                } else if (promosApi.isEmpty()) {
+                    Text("No hay promociones disponibles en este momento.")
+                } else {
+                    promosApi.forEach { promo ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+
+                                Image(
+                                    painter = rememberAsyncImagePainter(promo.image),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(180.dp)
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(promo.title, fontWeight = FontWeight.Bold)
+                                Text(promo.description)
+                                Text(
+                                    "Precio: $${promo.price}",
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // -----------------------
+            // INFORMACIÓN ADICIONAL
+            // -----------------------
             item {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(

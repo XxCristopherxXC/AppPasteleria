@@ -11,7 +11,10 @@ class LocationHelper(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun getUserLocation(): Location? {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
         val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+
         if (location != null) {
             Toast.makeText(
                 context,
@@ -21,6 +24,7 @@ class LocationHelper(private val context: Context) {
         } else {
             Toast.makeText(context, "No se pudo obtener la ubicación", Toast.LENGTH_SHORT).show()
         }
+
         return location
     }
 }

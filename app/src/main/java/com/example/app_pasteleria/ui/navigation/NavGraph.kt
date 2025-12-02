@@ -1,11 +1,9 @@
 package com.milsabores.pasteleria.ui.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.milsabores.pasteleria.ui.screens.InicioScreen
 import com.milsabores.pasteleria.ui.screens.CatalogoScreen
 import com.milsabores.pasteleria.ui.screens.CarritoScreen
@@ -21,7 +19,6 @@ fun AppNavGraph(navController: NavHostController) {
         startDestination = "inicio"
     ) {
 
-        // PANTALLA DE INICIO
         composable("inicio") {
             InicioScreen(
                 onVerCatalogoClick = { navController.navigate("catalogo") },
@@ -32,40 +29,30 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-        // CATALOGO
         composable("catalogo") {
             CatalogoScreen()
         }
 
-        // CARRITO REAL
         composable("carrito") {
             CarritoScreen()
         }
 
-        // PERFIL
-        composable("perfil") {
-            PerfilScreen(
-                usuarioViewModel = viewModel(),
-                onCerrarSesion = { navController.navigate("inicio") },
-                onVolverInicio = { navController.navigate("inicio") }
-            )
-        }
-
-        // PROMOCIONES
         composable("promociones") {
             PromocionesScreen(
                 onVolverInicioClick = { navController.navigate("inicio") }
             )
         }
 
-        // CREAR CUENTA
+        composable("perfil") {
+            PerfilScreen(
+                onEliminarCuenta = { navController.navigate("inicio") },
+                onVolverInicio = { navController.navigate("inicio") }
+            )
+        }
+
         composable("crearCuenta") {
             CrearCuentaScreen(
-                onCuentaCreada = { nombre, apellido, correo, contrasena ->
-                    // Aquí podrías guardar el usuario con el ViewModel
-                    // usuarioViewModel.crearCuenta(nombre, apellido, correo, contrasena)
-                    navController.navigate("inicio")
-                },
+                onCuentaCreada = { _, _, _, _ -> /* No volver al inicio */ },
                 onCancelarClick = { navController.navigate("inicio") }
             )
         }
